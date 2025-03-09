@@ -1,63 +1,36 @@
-const text = "Halo Perkenalkan Nama Saya Adalah PallxMods. Saya Suka Membuat Project Kecil. Saya Suka Membagikan Project Saya Dengan Gratis Di Channel Telegram @SharingScript ";
-let index = 0;
-const typingText = document.getElementById("typing-text");
+document.addEventListener("DOMContentLoaded", function () {
+    const text = [
+        "Halo, Nama Saya PallxMods.",
+        "Saya Suka Membuat Project Kecil.",
+        "Saya Suka Membagikan Project Saya Dengan Gratis.",
+        "Di Channel Telegram @SharingScript."
+    ];
 
-function typeWriter() {
-    typingText.innerText = text.substring(0, index);
-    index++;
-    if (index > text.length) {
-        index = 0;
-    }
-    setTimeout(typeWriter, 50);
-}
-typeWriter();
+    let lineIndex = 0;
+    let charIndex = 0;
+    const typingContainer = document.getElementById("typing-text");
 
-// Meteor Effect
-const canvas = document.getElementById("meteorCanvas");
-const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    function typeWriter() {
+        if (charIndex < text[lineIndex].length) {
+            typingContainer.innerHTML += text[lineIndex].charAt(charIndex);
+            charIndex++;
+            setTimeout(typeWriter, 50);
+        } else {
+            charIndex = 0;
+            lineIndex++;
 
-const meteors = [];
-
-class Meteor {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.length = Math.random() * 20 + 10;
-        this.speed = Math.random() * 5 + 2;
-        this.opacity = Math.random();
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x - this.length, this.y + this.length);
-        ctx.strokeStyle = `rgba(173, 216, 230, ${this.opacity})`;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }
-
-    update() {
-        this.x -= this.speed;
-        this.y += this.speed;
-        if (this.x < 0 || this.y > canvas.height) {
-            this.x = Math.random() * canvas.width;
-            this.y = -10;
+            if (lineIndex < text.length) {
+                typingContainer.innerHTML += "<br>"; // Tambah baris baru buat lanjut ngetik
+                setTimeout(typeWriter, 500);
+            } else {
+                setTimeout(() => {
+                    typingContainer.innerHTML = ""; // Hapus semua teks buat looping ulang
+                    lineIndex = 0;
+                    setTimeout(typeWriter, 500);
+                }, 2000);
+            }
         }
     }
-}
 
-for (let i = 0; i < 50; i++) {
-    meteors.push(new Meteor());
-}
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    meteors.forEach(meteor => {
-        meteor.update();
-        meteor.draw();
-    });
-    requestAnimationFrame(animate);
-}
-animate();
+    typeWriter();
+});
